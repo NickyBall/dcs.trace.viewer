@@ -11,6 +11,7 @@ const User = require('./models/user');
 var passport = require("passport");
 var LocalStrategy = require("passport-local");
 var passportLocalMongoose = require("passport-local-mongoose");
+var axios = require('axios');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -62,6 +63,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
+
+app.get('/app', (req, res) => {
+  axios.get('https://api.applicationinsights.io/v1/apps/9729db14-38c1-4475-b9f1-61ab6d703614/events/traces', {
+    headers: {
+      "x-api-key": 'kx0kmn4boeejed5f8t17178b32a38xtvtzfasp8d'
+    }
+  }).then(result => res.send(result.data)).catch(error => console.log(error));
+});
 
 app.get('/error', function (req, res, next) {
   res.render('error');

@@ -8,15 +8,54 @@ block content
   // Main content
   section.content
     // Default box
-    .box
-      .box-header.with-border
-        h3.box-title Title
-        .box-tools.pull-right
-          button.btn.btn-box-tool(type='button', data-widget='collapse', data-toggle='tooltip', title='Collapse')
-            i.fa.fa-minus
-          button.btn.btn-box-tool(type='button', data-widget='remove', data-toggle='tooltip', title='Remove')
-            i.fa.fa-times
-      .box-body
-        | Start creating your amazing application!
-      .box-footer
-        | Footer
+    .col-xs-12
+      .box
+        .box-header
+          h3.box-title Responsive Hover Table
+          .box-tools
+            .input-group.input-group-sm(style='width: 150px;')
+              input.form-control.pull-right(type='text', name='table_search', placeholder='Search')
+              .input-group-btn
+                button.btn.btn-default(type='submit')
+                  i.fa.fa-search
+        // /.box-header
+        .box-body.table-responsive.no-padding
+          table.table.table-hover
+            tbody
+              tr
+                th ID
+                th User
+                th Date
+                th Status
+                th Reason
+              tr
+                td 183
+                td John Doe
+                td 11-7-2014
+                td
+                  span.label.label-success Approved
+                td Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.
+              tr
+                td 219
+                td Alexander Pierce
+                td 11-7-2014
+                td
+                  span.label.label-warning Pending
+                td Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.
+              tr
+                td 657
+                td Bob Doe
+                td 11-7-2014
+                td
+                  span.label.label-primary Approved
+                td Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.
+              tr
+                td 175
+                td Mike Doe
+                td 11-7-2014
+                td
+                  span.label.label-danger Denied
+                td Bacon ipsum dolor sit amet salami venison chicken flank fatback doner.
+        // /.box-body
+        // /.box
+
