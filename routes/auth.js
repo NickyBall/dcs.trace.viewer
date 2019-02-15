@@ -1,4 +1,5 @@
 var express = require('express');
+var passport = require("passport");
 const User = require('../models/user');
 var router = express.Router();
 
@@ -7,26 +8,30 @@ router.get('/login', function(req, res, next) {
   res.render('auth/login', { title: 'DCS Trace Viewer' });
 });
 
-router.post('/login', (req, res) => {
-    console.log(req.body.username);
-    User.findOne({
-        username: req.body.username
-    }, (err, user) => {
-        if (err) throw err;
-        if (!user) {
-        res.status(401).json({ message: 'Authentication failed. User not found.' });
-        } else {
-        if (!user.password === req.body.password) {
-            res.status(401).json({ message: 'Authentication failed. Wrong username ot password.' });
-        } else {
-            console.log(user);
-            let sess = req.session;
-            sess.username = user.username;
-            sess._id = user._id;
-            res.redirect('/');
-        }
-        }
-    });
+router.post('/login', passport.authenticate("local", {
+
+    successRedirect: "/",
+    failureRedirect: "/auth/login"
+
+    }), (req, res) => {
+    }
+);
+
+router.post("/logout", function(req, res){
+    req.logout();
+    res.redirect("/");
 });
+
+// router.post('/register', function (req, res) {
+//     User.register(new User({username:req.body.username, email: req.body.email}),req.body.password, function(err, user){
+//         if(err){
+//              console.log(err);
+//              return res.render('register');
+//          } //user stragety
+//          passport.authenticate("local")(req, res, function(){
+//              res.redirect("/"); //once the user sign up
+//         }); 
+//     });
+// });
 
   module.exports = router;

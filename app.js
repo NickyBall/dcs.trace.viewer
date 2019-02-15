@@ -7,6 +7,10 @@ var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
+const User = require('./models/user');
+var passport = require("passport");
+var LocalStrategy = require("passport-local");
+var passportLocalMongoose = require("passport-local-mongoose");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -29,13 +33,20 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({
   secret: 'dcs.work',
   resave: false,
-  saveUninitialized: true
+  saveUninitialized: false
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.use(function (req, res, next) {
   res.locals.loggedIn = false;
 
-  if (req.session.passport && typeof eq.session.passport.user != 'undefined') {
+  if (req.session.passport && typeof req.session.passport.user != 'undefined') {
     res.locals.loggedIn = true;
   }
 
