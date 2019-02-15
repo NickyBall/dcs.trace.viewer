@@ -4,7 +4,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', isLoggedIn, function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'DCS Trace Viewer', user: req.user });
 });
 
 module.exports = router;

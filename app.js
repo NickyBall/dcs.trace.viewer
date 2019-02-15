@@ -16,9 +16,9 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
 
-mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}/loginapp?retryWrites=true`, function (err, client) {
-  if (err) console.log('error: ' + err);
-  else console.log('connect');
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}/loginapp?retryWrites=true`, (err, client) => {
+  if (err) console.log('connect db error: ' + err);
+  else console.log('connect to db');
 });
 
 var app = express();
@@ -62,19 +62,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
-
-app.get('/session', (request, response) => {
-  let sess = request.session
-  console.log(sess)
-  response.status(200).send('username = ' + sess.username + '  ' + '_id = ' + sess._id)
-
-})
-
-app.get('/user', function (req, res, next) {
-  res.render('user', {
-    user: req.user
-  });
-});
 
 app.get('/error', function (req, res, next) {
   res.render('error');
