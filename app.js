@@ -1,32 +1,21 @@
+require('dotenv').config()
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-// var passport = require('passport');
-// var auth0 = require('passport-auth0');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
-// var strategy = new auth0({
-//   domain: 'dev-dcs-trace.auth0.com',
-//   clientID: 'H57kkWkUvGWedmSF-pLkoDK6F478WgWT',
-//   clientSecret: 'SoiH8uvnUEMt0bb58FajVVzk5jJactmo3CXKlAFAeL1da93_Qezmm9YigKaVKH_a',
-//   callbackURL: 'http://localhost:3000/callback'
-// }, function(accessToken, refreshToken, extraParam, profile, done) {
-//   return done(null, profile);
-// });
-
-// passport.use(strategy);
-// passport.serializeUser(function(user, done) {
-//   done(null, user);
-// });
-// passport.deserializeUser(function (user, done) {
-//   done(null, user);
-// });
+const User = require('./models/user');
+const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+
+mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}/loginapp?retryWrites=true`, function (err, client) {
+  if (err) console.log('error: ' + err);
+  else console.log('connect');
+});
 
 var app = express();
 
@@ -42,9 +31,6 @@ app.use(session({
   resave: false,
   saveUninitialized: true
 }));
-
-// app.use(passport.initialize());
-// app.use(passport.session());
 
 app.use(function (req, res, next) {
   res.locals.loggedIn = false;
@@ -65,27 +51,34 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// app.get('/login', passport.authenticate('auth0', {
-//   clientID: 'H57kkWkUvGWedmSF-pLkoDK6F478WgWT',
-//   domain: 'dev-dcs-trace.auth0.com',
-//   redirectUri: 'http://localhost:3000/callback',
-//   responseType: 'code',
-//   audience: 'https://dev-dcs-trace.auth0.com/userinfo',
-//   scope: 'openid, profile'
-// }), function (req, res) {
-//   res.redirect('/');
-// });
+app.post('/login', (req, res) => {
+  console.log(req.body.username);
+  User.findOne({
+    username: req.body.username
+  }, (err, user) => {
+    if (err) throw err;
+    console.log(user);
+    if (!user) {
+      res.status(401).json({ message: 'Authentication failed. User not found.' });
+    } else {
+      if (!user.password === req.body.password) {
+        res.status(401).json({ message: 'Authentication failed. Wrong username ot password.' });
+      } else {
+        let sess = req.session;
+        sess.username = user.username;
+        sess._id = user._id;
+        res.status(200).send(user.username + ' ' + user._id);
+      }
+    }
+  });
+});
 
-// app.get('/logout', function (req, res) {
-//   req.logout();
-//   res.redirect('/');
-// });
+app.get('/session', (request, response) => {
+  let sess = request.session
+  console.log(sess)
+  response.status(200).send('username = ' + sess.username + '  ' + '_id = ' + sess._id)
 
-// app.get('/callback', passport.authenticate('auth0', {
-//   failureRedirect: '/error'
-// }), function (req, res) {
-//   res.redirect('/user');
-// });
+})
 
 app.get('/user', function (req, res, next) {
   res.render('user', {
