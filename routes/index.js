@@ -11,7 +11,8 @@ module.exports = router;
 
 //route middleware to ensure user is logged in
 function isLoggedIn(req, res, next) {
+  console.log('authenticated: ' + req.user.authenticated);
   if (req.isAuthenticated())
       return next();
-  res.redirect('/login');
+  res.redirect('/auth/login');
 }

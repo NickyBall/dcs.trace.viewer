@@ -6,11 +6,11 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-const User = require('./models/user');
 const mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var authRouter = require('./routes/auth');
 
 mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}/loginapp?retryWrites=true`, function (err, client) {
   if (err) console.log('error: ' + err);
@@ -50,28 +50,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
-app.post('/login', (req, res) => {
-  console.log(req.body.username);
-  User.findOne({
-    username: req.body.username
-  }, (err, user) => {
-    if (err) throw err;
-    console.log(user);
-    if (!user) {
-      res.status(401).json({ message: 'Authentication failed. User not found.' });
-    } else {
-      if (!user.password === req.body.password) {
-        res.status(401).json({ message: 'Authentication failed. Wrong username ot password.' });
-      } else {
-        let sess = req.session;
-        sess.username = user.username;
-        sess._id = user._id;
-        res.status(200).send(user.username + ' ' + user._id);
-      }
-    }
-  });
-});
+app.use('/auth', authRouter);
 
 app.get('/session', (request, response) => {
   let sess = request.session
