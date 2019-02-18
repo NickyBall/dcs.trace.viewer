@@ -3,6 +3,16 @@ extends layout
 block styles
     // DataTables
     link(rel='stylesheet', href='../../bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css')
+    style.
+        .wrapper {
+        width: 100%;
+        min-height: 100%;
+        height: auto !important;
+        position: absolute;
+        }
+        .content-wrapper {
+        min-height: 1124px;
+        }
 
 block content
   // Content Header (Page header)
@@ -49,5 +59,7 @@ block scripts
     // page script
     script.
         $(function () {
-            $('#example1').DataTable()
+            $('#example1').DataTable({
+                'pageLength': 25
+            });
         })
