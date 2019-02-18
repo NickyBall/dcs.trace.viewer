@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -16,6 +16,7 @@ var axios = require('axios');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var authRouter = require('./routes/auth');
+var traceRouter = require('./routes/trace');
 
 mongoose.connect(`mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_HOST}/loginapp?retryWrites=true`, (err, client) => {
   if (err) console.log('connect db error: ' + err);
@@ -33,8 +34,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(session({
   secret: 'dcs.work',
-  resave: false,
-  saveUninitialized: false
+  resave: true,
+  saveUninitialized: true
 }));
 
 app.use(passport.initialize());
@@ -63,17 +64,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
-
-app.get('/app', (req, res) => {
-  axios.get('https://api.applicationinsights.io/v1/apps/9729db14-38c1-4475-b9f1-61ab6d703614/events/traces', {
-    headers: {
-      "x-api-key": 'kx0kmn4boeejed5f8t17178b32a38xtvtzfasp8d'
-    }
-  }).then(result => res.send(result.data)).catch(error => console.log(error));
-});
+app.use('/trace', traceRouter);
 
 app.get('/error', function (req, res, next) {
-  res.render('error');
+  res.render('error', { title: 'DCS Trace Viewer', user: req.user });
 });
 
 // catch 404 and forward to error handler
@@ -89,7 +83,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('error', { title: 'DCS Trace Viewer', user: req.user });
 });
 
 module.exports = app;

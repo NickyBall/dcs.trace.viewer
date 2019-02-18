@@ -11,6 +11,7 @@ html
     link(rel='stylesheet', href='../adminlte2/dist/css/AdminLTE.min.css')
     link(rel='stylesheet', href='../adminlte2/dist/css/skins/_all-skins.min.css')
     link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic')
+    block styles
   body.hold-transition.skin-blue.sidebar-mini
     .wrapper
       header.main-header
@@ -81,6 +82,7 @@ html
     script(src='../adminlte2/dist/js/adminlte.min.js')
     // AdminLTE for demo purposes
     script(src='../adminlte2/dist/js/demo.js')
+    block scripts
     script.
       $(document).ready(function () {
       $('.sidebar-menu').tree()

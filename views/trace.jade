@@ -1,0 +1,53 @@
+extends layout
+
+block styles
+    // DataTables
+    link(rel='stylesheet', href='../../bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css')
+
+block content
+  // Content Header (Page header)
+  section.content-header
+    h1
+      | Trace Viewer
+  // Main content
+  section.content
+    // Default box
+    .col-xs-12
+      .box
+        .box-header
+          h3.box-title Responsive Hover Table
+        // /.box-header
+        .box-body
+          table#example1.table.table-bordered.table-striped
+            thead
+              tr
+                th ListenerName
+                th ServiceName
+                th SeverityLevel
+                th Message
+            tbody
+              each event in events
+                tr
+                  td.col-md-3= event.customDimensions.ListenerName
+                  td.col-md-3= event.customDimensions.ServiceName
+                  td.col-md-3= event.customDimensions.Level
+                  td.col-md-3
+            tfoot
+              tr
+                th ListenerName
+                th ServiceName
+                th SeverityLevel
+                th Message
+              
+        // /.box-body
+        // /.box
+
+block scripts
+    // DataTables
+    script(src='../adminlte2/bower_components/datatables.net/js/jquery.dataTables.min.js')
+    script(src='../adminlte2/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js')
+    // page script
+    script.
+        $(function () {
+            $('#example1').DataTable()
+        })
